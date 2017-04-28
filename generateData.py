@@ -8,11 +8,13 @@ import time
 import os
 
 def mapKeys(keys):
-	label = [0,0]
+	label = [0,0,0]
+	if 'W' in keys:
+		label = [1,0,0]
 	if 'A' in keys:
-		label = [1,0]
-	elif 'D' in keys:
-		label = [0,1]
+		label = [0,1,0]
+	if 'D' in keys:
+		label = [0,0,1]
 	return label
 
 if __name__ == '__main__':
@@ -32,7 +34,7 @@ if __name__ == '__main__':
 			keys = checkKeys()
 			output_keys = mapKeys(keys)
 			train_data.append([screenshot,output_keys])
-			time.sleep(0.025)
+			time.sleep(0.015)
 			print len(train_data)
 
 		k = checkKeys()

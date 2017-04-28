@@ -8,7 +8,7 @@ import os
 
 os.system("cls")
 
-VISUALIZE = False
+VISUALIZE = False or True
 VISUALIZE_OUTPUT = True
 
 train_data = np.load('train_data.npy')
@@ -33,6 +33,7 @@ if VISUALIZE:
 
 left = []
 right = []
+fwd = []
 
 shuffle(train_data)
 
@@ -40,17 +41,21 @@ for data in train_data:
 	i = data[0]
 	label = data[1]
 
-	if label == [1,0]:
+	if label == [1,0,0]:
+		fwd.append([i,label])
+	elif label == [0,1,0]:
 		left.append([i,label])
-	elif label == [0,1]:
+	elif label == [0,0,1]:
 		right.append([i,label])
 
 MIN = min(len(left),len(right))
+MIN = min(MIN,len(fwd))
 print "MIN = %d" % MIN
 left = left[:MIN]
 right = right[:MIN]
+fwd = fwd[:MIN]
 
-final_train_data = left + right
+final_train_data = left + right + fwd
 shuffle(final_train_data)
 
 np.save('final_train_data.npy',final_train_data)
