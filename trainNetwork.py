@@ -56,16 +56,15 @@ def createConvNet(w,h):
 	model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
 	return model
 
-print "Loading numpy data..."
+print("Loading numpy data...")
 data = np.load('final_train_data.npy')
 
-print "Splitting train-test sets..."
+print("Splitting train-test sets...")
 train_test_split_factor = int(round(0.1*len(data)))
-print "train_test_split_factor = %d" % train_test_split_factor
+print("train_test_split_factor = %d" % train_test_split_factor)
 
 train = data[:-train_test_split_factor]
 test = data[-train_test_split_factor:]
-
 
 q = []
 y = []
@@ -76,13 +75,11 @@ for i in range(train.shape[0]):
 		q.append(x)
 		y.append(t[1])
 	except Exception as e:
-		print str(e)
+		print(str(e))
 x = np.array(q,dtype='uint8')
-print x.shape
-print len(y)
-#x = np.array([train[0][i] for i in train])
-#x = x.reshape(-1,WIDTH,HEIGHT,1)
-#y = [train[1][i] for i in train]
+print(x.shape)
+print(len(y))
+
 '''
 x = []
 y = []
@@ -102,16 +99,16 @@ for i in test:
 
 x_test = np.array(x_test,dtype='uint8')
 x_test = x_test.reshape(-1,WIDTH,HEIGHT,1)
-print x_test.shape
+print(x_test.shape)
 
-print "Creating neural network..."
+print("Creating neural network...")
 network = createConvNet(WIDTH,HEIGHT)
 
-print "training network..."
+print("training network...")
 network.fit(x,y,batch_size=BATCH,epochs=EPOCHS,verbose=1,validation_data=(x_test,y_test))
 
 score = network.evaluate(x_test,y_test,verbose=2)
-print 'Test loss: ',score[0]
-print 'Test accuracy: ', score[1]
+print('Test loss: ',score[0])
+print('Test accuracy: ', score[1])
 
 network.save(fname)

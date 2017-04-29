@@ -11,12 +11,19 @@ os.system("cls")
 VISUALIZE = False or True
 VISUALIZE_OUTPUT = True
 
+def maskImage(img):
+	z = np.zeros((25,80),dtype='uint8')
+	o = np.ones((35,80),dtype='uint8')
+	mask = np.vstack((z,o))
+	masked = cv2.bitwise_and(img,img,mask=mask)
+	return masked
+
 train_data = np.load('train_data.npy')
 
-print "loading train_data.npy"
+print("loading train_data.npy")
 df = pd.DataFrame(train_data)
-print df.head()
-print Counter(df[1].apply(str))
+print(df.head())
+print(Counter(df[1].apply(str)))
 
 if VISUALIZE:
 	for i in range(len(df)):
@@ -50,7 +57,7 @@ for data in train_data:
 
 MIN = min(len(left),len(right))
 MIN = min(MIN,len(fwd))
-print "MIN = %d" % MIN
+print("MIN = %d" % MIN)
 left = left[:MIN]
 right = right[:MIN]
 fwd = fwd[:MIN]

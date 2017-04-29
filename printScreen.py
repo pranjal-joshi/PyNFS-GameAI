@@ -2,8 +2,8 @@ from PIL import ImageGrab, Image
 import time
 from sendKeys import PressKey, ReleaseKey, PRINT_SCREEN
 import win32api, win32con
-import cv2
 import numpy as np
+import cv2
 
 def grabImage(x,cy,cx,saveimg=False):
 	try:
@@ -17,7 +17,7 @@ def grabImage(x,cy,cx,saveimg=False):
 				cv2.imwrite('sampleData/captured%d.bmp' % int(x),i)
 			return i
 	except Exception as e:
-		print str(e)
+		print(str(e))
 		pass
 
 def screenshotMethod(y,x):
@@ -27,18 +27,18 @@ def screenshotMethod(y,x):
 
 '''
 time.sleep(8)
-#while True:
-for z in range(0,200):
+while True:
+#for z in range(0,200):
 	try:
 		t = time.time()
 		win32api.keybd_event(win32con.VK_SNAPSHOT,1)
-		i = grabImage(z,saveimg=True)
+		i = grabImage(0,320,240,saveimg=False)
 		cv2.imshow("printScreen",i)
 		if(cv2.waitKey(25) & 0xFF == ord('q')):
 			cv2.destroyAllWindows()
 			break
-		print 1/(time.time()-t)
+		print(1/(time.time()-t))
 	except Exception as e:
-		print e
+		print(str(e))
 		pass
 '''

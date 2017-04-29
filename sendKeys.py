@@ -67,15 +67,15 @@ def ReleaseKey(hexKeyCode):
 
 if __name__ == '__main__':
     time.sleep(5)
-    print "up"
+    print("up")
     PressKey(UP)
     time.sleep(2)
     ReleaseKey(UP)
     PressKey(DOWN)
-    print "down"
+    print("down")
     time.sleep(2)
     ReleaseKey(DOWN)
     PressKey(SPACEBAR)
     time.sleep(2)
     ReleaseKey(SPACEBAR)
-    print "done"
+    print("done")

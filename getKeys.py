@@ -17,5 +17,5 @@ def checkKeys():
 '''
 while True:
 	z = checkKeys()
-	print z
+	print(z)
 '''
