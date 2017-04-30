@@ -10,12 +10,12 @@ import cv2
 import pandas as pd
 import os
 from sendKeys import PressKey, ReleaseKey, A, D
-from printScreen import screenshotMethod
+from printScreen import screenshotMethod, maskImage
 from getKeys import checkKeys
 
 WIDTH = 80
 HEIGHT = 60
-fname = "keras-trained-E14.h5"
+fname = "keras-trained-E12.h5"
 MAX_CLASSIFIERS = 3
 
 delta_time = 0.3
@@ -74,6 +74,7 @@ network.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accur
 print("Staring AI in ...")
 for i in range(1,6)[::-1]:
 	print(i)
+	time.sleep(1)
 
 paused = False
 
@@ -81,17 +82,23 @@ paused = False
 while True:
 	if not paused:
 		try:
-			scr = screenshotMethod(WIDTH,HEIGHT)
+			scr = maskImage(screenshotMethod(WIDTH,HEIGHT))
 			scr = scr.reshape(-1,WIDTH,HEIGHT,1)
 			preds = network.predict(scr)
 			print(preds)
+			'''
+			if int(round(preds[0][0])) == 1:
+				left()
+			elif int(round(preds[0][1])) == 1:
+				right()
+			'''
+			if preds[0][0] == max(preds[0][0],preds[0][1]):
+				left()
+			elif preds[0][1] == max(preds[0][0],preds[0][1]):
+				right()
 		except Exception as e:
 			print(str(e))
 
-		if int(round(preds[0][0])) == 1:
-			left()
-		elif int(round(preds[0][1])) == 1:
-			right()
 
 	keys = checkKeys()
 

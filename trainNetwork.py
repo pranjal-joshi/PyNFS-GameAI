@@ -2,7 +2,8 @@
 import keras
 from keras.models import Sequential
 from keras.layers import Dense, Dropout, Flatten, Activation, Conv2D
-from keras.layers.convolutional import Convolution2D, MaxPooling2D
+from keras.layers.convolutional import Convolution2D, MaxPooling2D, ZeroPadding2D
+from keras.optimizers import SGD
 from keras import backend as k
 import numpy as np
 import pandas as pd
@@ -14,7 +15,7 @@ WIDTH = 80
 HEIGHT = 60
 MAX_CLASSIFIERS = 3 		# left & right
 
-alpha = 0.03
+alpha = 0.09
 EPOCHS = 8
 BATCH = 10
 
@@ -22,38 +23,75 @@ fname = 'keras-trained-E%d.h5' % EPOCHS
 
 def createConvNet(w,h):
 
+	sgd = SGD(lr=alpha, decay=1e-6, momentum=0.9, nesterov=True)
+
 	model = Sequential()
-
-	model.add(Conv2D(32,(3,3),input_shape=(w,h,1)))
+	'''
+	model.add(Conv2D(32,3,3,input_shape=(w,h,1)))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=(2,2)))
 
-	model.add(Conv2D(32,(3,3)))
+	model.add(Conv2D(32,3,3))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=(2,2)))
 
-	model.add(Conv2D(64,(3,3)))
+	model.add(Conv2D(64,3,3))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=(2,2)))
 
-	model.add(Conv2D(64,(3,3)))
+	model.add(Conv2D(64,3,3))
 	model.add(Activation('relu'))
 	model.add(MaxPooling2D(pool_size=(2,2)))
 
 	model.add(Flatten())
 
-	model.add(Dense(80))
+	model.add(Dense(96))
 	model.add(Activation('relu'))
-	model.add(Dropout(0.4))
+	model.add(Dropout(0.5))
 
-	model.add(Dense(64))
+	model.add(Dense(96))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.5))
+
+	model.add(Dense(48))
+	model.add(Activation('relu'))
+
+	model.add(Dense(MAX_CLASSIFIERS))
+	model.add(Activation('softmax'))
+	'''
+	#VGG-16
+	model.add(ZeroPadding2D((1,1),input_shape=(w,h,1)))
+	model.add(Conv2D(32,3,3))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D((2,2),strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Conv2D(64,3,3))
+	model.add(Activation('relu'))
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Conv2D(64,3,3))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D((2,2),strides=(2,2)))
+
+	model.add(ZeroPadding2D((1,1)))
+	model.add(Conv2D(128,3,3))
+	model.add(Activation('relu'))
+	model.add(MaxPooling2D((2,2),strides=(2,2)))
+
+	model.add(Flatten())
+
+	model.add(Dense(128))
+	model.add(Activation('relu'))
+	model.add(Dropout(0.5))
+
+	model.add(Dense(128))
 	model.add(Activation('relu'))
 	model.add(Dropout(0.5))
 
 	model.add(Dense(MAX_CLASSIFIERS))
 	model.add(Activation('softmax'))
 
-	model.compile(loss='categorical_crossentropy',optimizer='adam',metrics=['accuracy'])
+	model.compile(loss='categorical_crossentropy',optimizer=sgd,metrics=['accuracy'])
 	return model
 
 print("Loading numpy data...")
@@ -80,17 +118,6 @@ x = np.array(q,dtype='uint8')
 print(x.shape)
 print(len(y))
 
-'''
-x = []
-y = []
-for i in train:
-	x.append(i[0])
-	y.append(i[1])
-
-x = np.array(x,dtype='uint8')
-x = x.reshape(-1,WIDTH,HEIGHT,1)
-'''
-
 x_test = []
 y_test = []
 for i in test:
@@ -105,7 +132,7 @@ print("Creating neural network...")
 network = createConvNet(WIDTH,HEIGHT)
 
 print("training network...")
-network.fit(x,y,batch_size=BATCH,epochs=EPOCHS,verbose=1,validation_data=(x_test,y_test))
+network.fit(x,y,batch_size=BATCH,nb_epoch=EPOCHS,verbose=1,validation_data=(x_test,y_test))
 
 score = network.evaluate(x_test,y_test,verbose=2)
 print('Test loss: ',score[0])

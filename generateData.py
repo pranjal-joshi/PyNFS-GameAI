@@ -7,6 +7,9 @@ import time
 import os
 import cv2
 
+WIDTH = 80
+HEIGHT = 60
+
 def mapKeys(keys):
 	label = [0,0,0]
 	if 'W' in keys:
@@ -18,10 +21,14 @@ def mapKeys(keys):
 	return label
 
 def maskImage(img):
-	z = np.zeros((25,80),dtype='uint8')
-	o = np.ones((35,80),dtype='uint8')
-	mask = np.vstack((z,o))
+	uz = np.zeros((25,80),dtype='uint8')
+	o = np.ones((25,80),dtype='uint8')
+	lz = np.zeros((10,80),dtype='uint8')
+	mask = np.vstack((uz,o))
+	mask = np.vstack((mask,lz))
 	masked = cv2.bitwise_and(img,img,mask=mask)
+	masked = masked[25:51,:]
+	masked = cv2.resize(masked,(WIDTH,HEIGHT),1)
 	return masked
 
 if __name__ == '__main__':
@@ -38,7 +45,7 @@ if __name__ == '__main__':
 	while True:
 		if not paused:
 			try:
-				screenshot = maskImage(screenshotMethod(80,60))
+				screenshot = maskImage(screenshotMethod(WIDTH,HEIGHT))
 				keys = checkKeys()
 				output_keys = mapKeys(keys)
 				train_data.append([screenshot,output_keys])

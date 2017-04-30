@@ -11,13 +11,6 @@ os.system("cls")
 VISUALIZE = False or True
 VISUALIZE_OUTPUT = True
 
-def maskImage(img):
-	z = np.zeros((25,80),dtype='uint8')
-	o = np.ones((35,80),dtype='uint8')
-	mask = np.vstack((z,o))
-	masked = cv2.bitwise_and(img,img,mask=mask)
-	return masked
-
 train_data = np.load('train_data.npy')
 
 print("loading train_data.npy")
